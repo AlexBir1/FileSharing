@@ -1,0 +1,395 @@
+
+<div class="row justify-content-center" style="margin-top: 50px">
+  <div class="col-lg-5 text-center" *ngIf="!searchActive && !uploadActive">
+    <div class="btn-group">
+      <button class="btn btn-secondary" style="cursor:pointer" (click)="openModalCategoryPanel(ChooseCategory)">Categories <i class="bi bi-collection"></i></button>
+      <button class="btn btn-primary" style="cursor:pointer" (click)="changeSearchStatus()">Search <i class="bi bi-search"></i></button>
+      <button class="btn btn-success" style="cursor:pointer" (click)="changeUploadStatus()">Upload <i class="bi bi-upload"></i></button>
+    </div>
+  </div>
+  <div class="col-lg-5" *ngIf="searchActive">
+    <div class="input-group">
+      <button class="btn btn-danger" style="font-size:16px" (click)="defaultOperationStatuses()"><i class="bi bi-arrow-left-circle"></i></button>
+      <input type="text" class="form-control" [(ngModel)]="searchValue" placeholder="Type filename" />
+      <button class="btn btn-primary" (click)="onSearch()">Search</button>
+    </div>
+  </div>
+  <div class="col-lg-5" *ngIf="uploadActive">
+    <form [formGroup]="fileForm" (submit)="onUploadSubmit(loadingFile, successSave)">
+      <div class="input-group">
+        <button class="btn btn-danger" style="font-size:16px" (click)="defaultOperationStatuses()"><i class="bi bi-arrow-left-circle"></i></button>
+        <input type="file" class="form-control" (change)="handleFileInput($event)" />
+        <button class="btn btn-primary" type="submit">Upload</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="fileHandler.fileList.length === 0" class="text-center mt-5">
+  <h3>Files not found or still loading</h3>
+</div>
+
+<div class="mt-5" *ngIf="(fileHandler.filteredFileList.length === 0 && fileHandler.fileList.length > 0 && fileHandler.categoryFileList.length === 0) && fileHandler.selectedFile === null">
+  <div class="row card-list mt-3 mb-5 justify-content-center" style="grid-row-gap:15px">
+    <div class="col-lg-4" *ngFor="let item of fileHandler.fileList | paginate: {itemsPerPage: 6, currentPage: page, totalItems: fileHandler.fileList.length}">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col" style="text-align:left">
+              <p class="fw-bold">{{item.title}}</p>
+            </div>
+            <div class="col" style="text-align:right">
+              {{item.extension}}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li>
+              Size: {{convertFileSize(item.size)}}
+            </li>
+            <li>
+              Category: {{item.categoryTitle}}
+            </li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <div *ngIf="item.canBeDownloaded" class="row">
+            <div class="col text-end justify-content-end">
+              <a class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" style="cursor:pointer" (click)="changeSelectedFileActive(item)">Details</a>
+                <a class="dropdown-item" style="cursor:pointer" (click)="updateDownloadStatus(item)" *ngIf="currentAccount.roles.includes('Admin')">Restrict download</a>
+                <a class="dropdown-item" style="cursor:pointer" (click)="onDownloadSubmit(item, downloadingFile)">Download</a>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!item.canBeDownloaded" class="col">
+            <div class="row">
+              <div class="col">
+                <label class="text-danger">DOWNLOAD RESTRICTED</label>
+              </div>
+              <div class="col text-end justify-content-end">
+                <a class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" style="cursor:pointer" (click)="changeSelectedFileActive(item)">Details</a>
+                  <a class="dropdown-item" style="cursor:pointer" (click)="updateDownloadStatus(item)" *ngIf="currentAccount.roles.includes('Admin')">Allow download</a>
+                  <a class="dropdown-item" style="cursor:pointer" (click)="onDownloadSubmit(item, downloadingFile)">Download</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-3">
+      <pagination-controls previousLabel="Back" nextLabel="Next" (pageChange)="changeCurrentPage($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+<div class="mt-5" *ngIf="fileHandler.filteredFileList.length > 0 && fileHandler.selectedFile === null">
+  <div class="row- card-list mt-3 mb-5 justify-content-center" style="grid-row-gap:15px">
+    <div class="col-lg-4" *ngFor="let item of fileHandler.filteredFileList | paginate: {itemsPerPage: 6, currentPage: page, totalItems: fileHandler.filteredFileList.length}">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col" style="text-align:left">
+              <p class="fw-bold">{{item.title}}</p>
+            </div>
+            <div class="col" style="text-align:right">
+              {{item.extension}}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li>
+              Size: {{convertFileSize(item.size)}}
+            </li>
+            <li>
+              Category: {{item.categoryTitle}}
+            </li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <div *ngIf="item.canBeDownloaded" class="row">
+            <div class="col text-end justify-content-end">
+              <a class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" style="cursor:pointer" (click)="changeSelectedFileActive(item)">Details</a>
+                <a class="dropdown-item" style="cursor:pointer" (click)="updateDownloadStatus(item)" *ngIf="currentAccount.roles.includes('Admin')">Restrict download</a>
+                <a class="dropdown-item" style="cursor:pointer" (click)="onDownloadSubmit(item, downloadingFile)">Download</a>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!item.canBeDownloaded" class="col">
+            <div class="row">
+              <div class="col">
+                <label class="text-danger">DOWNLOAD RESTRICTED</label>
+              </div>
+              <div class="col text-end justify-content-end">
+                <a class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" style="cursor:pointer" (click)="changeSelectedFileActive(item)">Details</a>
+                  <a class="dropdown-item" style="cursor:pointer" (click)="updateDownloadStatus(item)" *ngIf="currentAccount.roles.includes('Admin')">Allow download</a>
+                  <a class="dropdown-item" style="cursor:pointer" (click)="onDownloadSubmit(item, downloadingFile)">Download</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-3">
+      <pagination-controls previousLabel="Back" nextLabel="Next" (pageChange)="changeCurrentPage($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+<div class="mt-5" *ngIf="fileHandler.categoryFileList.length > 0 && fileHandler.selectedFile === null">
+  <div class="row card-list mt-3 mb-5 justify-content-center" style="grid-row-gap:15px">
+    <div class="col-lg-4" *ngFor="let item of fileHandler.categoryFileList | paginate: {itemsPerPage: 6, currentPage: page, totalItems: fileHandler.categoryFileList.length}">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col" style="text-align:left">
+              <p class="fw-bold">{{item.title}}</p>
+            </div>
+            <div class="col" style="text-align:right">
+              {{item.extension}}
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li>
+              Size: {{convertFileSize(item.size)}}
+            </li>
+            <li>
+              Category: {{item.categoryTitle}}
+            </li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <div *ngIf="item.canBeDownloaded" class="row">
+            <div class="col text-end justify-content-end">
+              <a class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" style="cursor:pointer" (click)="changeSelectedFileActive(item)">Details</a>
+                <a class="dropdown-item" style="cursor:pointer" (click)="updateDownloadStatus(item)" *ngIf="currentAccount.roles.includes('Admin')">Restrict download</a>
+                <a class="dropdown-item" style="cursor:pointer" (click)="onDownloadSubmit(item, downloadingFile)">Download</a>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!item.canBeDownloaded" class="col">
+            <div class="row">
+              <div class="col">
+                <label class="text-danger">DOWNLOAD RESTRICTED</label>
+              </div>
+              <div class="col text-end justify-content-end">
+                <a class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" style="cursor:pointer" (click)="changeSelectedFileActive(item)">Details</a>
+                  <a class="dropdown-item" style="cursor:pointer" (click)="updateDownloadStatus(item)" *ngIf="currentAccount.roles.includes('Admin')">Allow download</a>
+                  <a class="dropdown-item" style="cursor:pointer" (click)="onDownloadSubmit(item, downloadingFile)">Download</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-3">
+      <pagination-controls previousLabel="Back" nextLabel="Next" (pageChange)="changeCurrentPage($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+<div class="mt-5" *ngIf="fileHandler.selectedFile != null">
+  <div class="row card-list mt-3 mb-5 justify-content-center" style="grid-row-gap:15px">
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-lg-1">
+              <button class="btn btn-danger" style="font-size:16px" (click)="changeSelectedFileActive(null)"><i class="bi bi-arrow-left-circle"></i></button>
+            </div>
+            <div class="col text-center align-content-center">
+              <h3>Selected file</h3>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul>
+            <li>
+              Title: {{fileHandler.selectedFile.title}}
+            </li>
+            <li>
+              Extension: {{fileHandler.selectedFile.extension}}
+            </li>
+            <li>
+              Category: {{fileHandler.selectedFile.categoryTitle}}
+            </li>
+            <li>
+              Uploaded at: {{fileHandler.selectedFile.uploadDate}}
+            </li>
+            <li>
+              Lastly downloaded: {{fileHandler.selectedFile.lastDownloadDate}}
+            </li>
+            <li>
+              ContentType: {{fileHandler.selectedFile.contentType}}
+            </li>
+            <li>
+              Size: {{convertFileSize(fileHandler.selectedFile.size)}}
+            </li>
+            <li>
+              Path: {{fileHandler.selectedFile.path}}
+            </li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <div *ngIf="fileHandler.selectedFile.canBeDownloaded" class="row">
+            <div class="col text-end justify-content-end">
+              <a class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" style="cursor:pointer" (click)="updateDownloadStatus(fileHandler.selectedFile)" *ngIf="currentAccount.roles.includes('Admin')">Restrict download</a>
+                <a class="dropdown-item" style="cursor:pointer" (click)="onDownloadSubmit(fileHandler.selectedFile, downloadingFile)">Download</a>
+                <a class="dropdown-item" style="cursor:pointer" *ngIf="currentAccount.roles.includes('Admin')" (click)="openModal(deleteFileConfimation)">Delete</a>
+                <a class="dropdown-item" style="cursor:pointer" *ngIf="currentAccount.roles.includes('Admin') && fileHandler.selectedFile.categoryTitle === 'Unsorted'" (click)="openModalSelectCategory(SelectCategory)">Select Category</a>
+                <a class="dropdown-item" style="cursor:pointer" *ngIf="currentAccount.roles.includes('Admin') && fileHandler.selectedFile.categoryTitle != 'Unsorted'" (click)="setCategoryUnsorted(fileHandler.selectedFile.id)">Remove from {{fileHandler.selectedFile.categoryTitle}}</a>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!fileHandler.selectedFile.canBeDownloaded" class="col">
+            <div class="row">
+              <div class="col">
+                <label class="text-danger">DOWNLOAD RESTRICTED</label>
+              </div>
+              <div class="col text-end justify-content-end">
+                <a class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Options</a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" style="cursor:pointer" (click)="updateDownloadStatus(fileHandler.selectedFile)" *ngIf="currentAccount.roles.includes('Admin')">Allow download</a>
+                  <a class="dropdown-item" style="cursor:pointer" (click)="onDownloadSubmit(fileHandler.selectedFile, downloadingFile)">Download</a>
+                  <a class="dropdown-item" style="cursor:pointer" *ngIf="currentAccount.roles.includes('Admin')" (click)="openModal(deleteFileConfimation)">Delete</a>
+                  <a class="dropdown-item" style="cursor:pointer" *ngIf="currentAccount.roles.includes('Admin') && fileHandler.selectedFile.categoryTitle === 'Unsorted'" (click)="openModalSelectCategory(SelectCategory)">Select Category</a>
+                  <a class="dropdown-item" style="cursor:pointer" *ngIf="currentAccount.roles.includes('Admin') && fileHandler.selectedFile.categoryTitle != 'Unsorted'" (click)="setCategoryUnsorted(fileHandler.selectedFile.id)">Remove from {{fileHandler.selectedFile.categoryTitle}}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #deleteFileConfimation>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Confirmation</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    This operation is irrevertable. The data will be wiped out.
+    <br />
+    <h3>CONTINUE??</h3>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" (click)="onDeleteSubmit()">Confirm removal</button>
+  </div>
+</ng-template>
+
+<ng-template #ChooseCategory>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Categories</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalCategyPanelRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="justify-content-center">
+      <div class="button-border-elem p-3" (click)="selectAllCategories()">All</div>
+      <div *ngFor="let i of categories">
+        <div class="button-border-elem p-3" (click)="selectCategory(i)">{{i.title}}</div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #SelectCategory>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Select new category</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalCategyPanelRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="justify-content-center">
+      <div *ngFor="let i of categories">
+        <div class="button-border-elem p-3" (click)="setCategory(i)">{{i.title}}</div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #loadingFile>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Loading</h4>
+  </div>
+  <div class="modal-body">
+    <div class="justify-content-center">
+      <div *ngIf="uploadedFile != null">
+        <h3>File uploaded successfully!</h3>
+        <p>If there is a mistake you can delete it or save if intetionally uploaded.</p>
+      </div>
+      <progressbar type="danger" [max]="100" [value]="uploadProgress" [striped]="true" [animate]="true"></progressbar>
+    </div>
+  </div>
+  <div class="modal-footer justify-content-center">
+    <button (click)="cancelUploading()" class="btn btn-warning" *ngIf="uploadProgress != 100">Cancel</button>
+    <div id="controlAfterUpload" *ngIf="uploadProgress === 100">
+      <button (click)="deleteUploadedFile()" class="btn btn-warning">Delete</button>
+      <button (click)="saveUploadedFile()" class="btn btn-success">Save</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #downloadingFile>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Loading</h4>
+  </div>
+  <div class="modal-body">
+    <div class="justify-content-center">
+      <h4>File is preparing for downloading. This window will close automatically</h4>
+    </div>
+  </div>
+  <div class="modal-footer justify-content-center">
+  </div>
+</ng-template>
+
+<ng-template #successSave>
+  <div class="modal-header">
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row justify-content-center text-center">
+      <div class="col-4 bg-success p-3" style="border-radius:15px">
+        <i class="bi bi-check2-circle" style="font-size: 56px; color: white"></i>
+      </div>
+    </div>
+  </div>
+</ng-template>
+

@@ -1,0 +1,242 @@
+<div *ngIf="!(accountHandler.currentAccount)">
+  <h1>Loading...</h1>
+</div>
+
+<div class="row justify-content-center mb-5" style="margin-top: 50px" *ngIf="accountHandler.currentAccount.roles.includes('Admin')">
+  <div class="col-lg-5 text-center" *ngIf="!searchAccountActive">
+    <div class="btn-group">
+      <button class="btn btn-primary" *ngIf="showAccountList" (click)="changeShowCurrentAccount()">Current Account <i class="bi bi-person-fill"></i></button>
+      <button class="btn btn-success" *ngIf="!showAccountList" (click)="changeShowAccountList()">All Accounts <i class="bi bi-people-fill"></i></button>
+      <button class="btn btn-secondary" *ngIf="showAccountList" (click)="changeSearchAccountStatus()">Search <i class="bi bi-search"></i></button>
+    </div>
+  </div>
+  <div class="col-lg-5 text-center" *ngIf="searchAccountActive">
+    <div class="input-group">
+      <button class="btn btn-danger" style="font-size:16px"><i class="bi bi-arrow-left-circle" (click)="changeSearchAccountStatus()"></i></button>
+      <input type="text" class="form-control" [(ngModel)]="searchValue" placeholder="Type filename" />
+      <button class="btn btn-primary" (click)="changeShowSelectedAccounts()">Search</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showAccountList && accountHandler.accountList && accountHandler.accountList.length === 0">
+  <h3>Loading...</h3>
+</div>
+
+<div class="row justify-content-center" *ngIf="accountHandler.currentAccount.roles.includes('Admin') && showAccountList && accountHandler.accountList && !showSelectedAccounts && !showSelectedAccount">
+  <div class="col">
+    <table class="table table-bordered">
+      <thead>
+        <tr >
+          <td>Username</td>
+          <td>Email</td>
+          <td>#</td>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of accountHandler.accountList | paginate: {itemsPerPage: 10, currentPage: page, totalItems: accountHandler.accountList.length}">
+          <td>{{item.username}}</td>
+          <td>{{item.email}}</td>
+          <td><button class="btn btn-success" (click)="changeShowSelectedAccount(item)">Details</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-3">
+      <pagination-controls previousLabel="Back" nextLabel="Next" (pageChange)="changeCurrentPage($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center" *ngIf="accountHandler.currentAccount.roles.includes('Admin') && showSelectedAccounts && accountHandler.filteredAccountList && !showSelectedAccount">
+  <div class="col">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td>Username</td>
+          <td>Email</td>
+          <td>#</td>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of accountHandler.filteredAccountList | paginate: {itemsPerPage: 10, currentPage: page, totalItems: accountHandler.filteredAccountList.length}">
+          <td>{{item.username}}</td>
+          <td>{{item.email}}</td>
+          <td><button class="btn btn-success" (click)="changeShowSelectedAccount(item)">Details</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-3">
+      <pagination-controls previousLabel="Back" nextLabel="Next" (pageChange)="changeCurrentPage($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center" *ngIf="accountHandler.currentAccount && !(updateActive) && showCurrentAccount && !showSelectedAccount" style="margin-top: 50px" >
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header text-center">
+        <h2>Current account</h2>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>Username: {{accountHandler.currentAccount.username}}</li>
+          <li>Email: {{accountHandler.currentAccount.email}}</li>
+          <li>Registration Date: {{accountHandler.currentAccountRegDate}}</li>
+          <li>Roles: {{accountHandler.currentAccountRole}}</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-warning" (click)="changeUpdateActive()" style="margin-right:20px">Update</button>
+        <button class="btn btn-primary" (click)="openModalWithAccountAdditionalInfo(AccountAdditionalInfo, accountHandler.currentAccount.id)" style="margin-right:20px">Info</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center" style="margin-top: 50px" *ngIf="updateActive">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-lg-1">
+            <button class="btn btn-danger" style="font-size:16px" (click)="changeUpdateActive()"><i class="bi bi-arrow-left-circle"></i></button>
+          </div>
+          <div class="col text-center align-content-center">
+            <h3>Update Account</h3>
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="updateAccountForm" (submit)="openModal(updateAccountConfimation)">
+        <input type="hidden" formControlName="id" />
+        <div class="card-body">
+          <div class="form-floating mb-4">
+            <input id="AccountUsername" class="form-control" formControlName="username" placeholder="Username" />
+            <label for="AccountUsername">Username</label>
+          </div>
+          <span *ngIf="updateAccountForm.controls['username'].dirty && updateAccountForm.hasError('required','username')" class="text-danger bold">Field is required</span>
+          <div class="form-floating mb-4">
+            <input id="AccountEmail" class="form-control" formControlName="email" placeholder="Email" />
+            <label for="AccountEmail">Email</label>
+          </div>
+          <span *ngIf="updateAccountForm.controls['email'].dirty && updateAccountForm.hasError('required','email')" class="text-danger bold">Field is required</span>
+          <div class="card-group" *ngIf="ErrorList.length > 0">
+            <p class="text-danger" *ngFor="let item of ErrorList">{{item}}</p>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-warning">Confirm update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<ng-template #updateAccountConfimation>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Confirmation</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Sign out operation will perform automatically after changing the information.
+    <br />
+    <h3>CONTINUE??</h3>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" (click)="updateAccount()">Confirm update</button>
+  </div>
+</ng-template>
+
+<ng-template #AccountAdditionalInfo>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Additional Information</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ul>
+      <li>
+        TotalSizeProcessed: {{convertFileSize(additionalInfo.totalSizeProcessed)}}
+      </li>
+      <li>
+        FilesUploaded: {{additionalInfo.filesUploaded}}
+      </li>
+      <li>
+        FilesDownloaded: {{additionalInfo.filesDownloaded}}
+      </li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" (click)="modalRef?.hide()">Close</button>
+  </div>
+</ng-template>
+
+<div class="row justify-content-center" *ngIf="showSelectedAccount && accountHandler.selectedAccount && !(updateActive)" style="margin-top: 50px">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header text-center">
+        <div class="row">
+          <div class="col-lg-1">
+            <button class="btn btn-danger" style="font-size:16px" (click)="changeShowSelectedAccount(null)"><i class="bi bi-arrow-left-circle"></i></button>
+          </div>
+          <div class="col text-center align-content-center">
+            <h3>Selected Account</h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>Username: {{accountHandler.selectedAccount.username}}</li>
+          <li>Email: {{accountHandler.selectedAccount.email}}</li>
+          <li>Registration Date: {{accountHandler.selectedAccountRegDate}}</li>
+          <li>Role: {{accountHandler.selectedAccountRole}}</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <button *ngIf="accountHandler.currentAccount.roles.includes('Admin')" class="btn btn-success" style="margin-right:20px" (click)="openRolesModal(ChooseRole)">Roles</button>
+        <button class="btn btn-warning" (click)="changeUpdateActive()" style="margin-right:20px">Update</button>
+        <button *ngIf="accountHandler.currentAccount.roles.includes('Admin')" class="btn btn-danger" (click)="openModal(deleteAccountConfimation)" style="margin-right:20px">Delete</button>
+        <button class="btn btn-primary" (click)="openModalWithAccountAdditionalInfo(AccountAdditionalInfo, accountHandler.currentAccount.id)" style="margin-right:20px">Info</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #ChooseRole>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Choose new role</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="justify-content-center">
+      <div *ngFor="let i of availableRoles">
+        <div class="button-border-elem p-3" (click)="selectRole(i)">{{i}}</div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteAccountConfimation>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Confirmation</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    This operation is irrevertable. The data will be wiped out.
+    <br />
+    <h3>CONTINUE??</h3>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" (click)="deleteAccount(accountHandler.selectedDeleteId)">Confirm removal</button>
+  </div>
+</ng-template>

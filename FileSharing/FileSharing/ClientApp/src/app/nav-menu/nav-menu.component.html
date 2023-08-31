@@ -1,0 +1,128 @@
+<header id="navbarSide" class="navbar-side-half">
+  <div>
+    <div class="mb-5" style="cursor: pointer; color: black">
+      <a (click)="toggle()">
+        <div class="row align-items-center navbar-elem-text">
+          <div class="col-2">
+            <i class="bi bi-list" style="font-size:30px "></i>
+            <div class="link-tip" *ngIf="!isExpanded">
+              <label>Menu</label>
+            </div>
+          </div>
+          <div class="col-8">
+            <label class="link-tip-full-hidden">FileSharing</label>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div>
+      <div class="row mb-3 navbar-side-elem">
+        <a class="link-dark position-relative" [routerLink]="['/']">
+          <div class="row align-items-center navbar-elem-text">
+            <div class="col-2">
+              <i class="bi bi-house" style="font-size: 30px; color: var(--bs-navbar-text-color);"></i>
+              <div class="link-tip" *ngIf="!isExpanded">
+                <label style="cursor:pointer">Home</label>
+              </div>
+            </div>
+            <div class="col-8">
+              <label class="link-tip-full-hidden">Home</label>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="row mb-3 navbar-side-elem" *ngIf="(accountService.currentAccount$ | async) === null">
+        <a class="link-dark position-relative" [routerLink]="['/auth']">
+          <div class="row align-items-center navbar-elem-text">
+            <div class="col-2">
+              <i class="bi bi-door-closed" style="font-size: 30px; color: var(--bs-navbar-text-color);"></i>
+              <div class="link-tip" *ngIf="!isExpanded">
+                <label>Sign up<br />Sign in</label>
+              </div>
+            </div>
+            <div class="col-8">
+              <label class="link-tip-full-hidden">Sign up | Sign in</label>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div *ngIf="(accountService.currentAccount$ | async) as AccountModel">
+        <div class="row mb-3 navbar-side-elem">
+          <a class="link-dark position-relative" [routerLink]="['/files']">
+            <div class="row align-items-center navbar-elem-text">
+              <div class="col-2">
+                <i class="bi bi-file-earmark" style="font-size: 30px; color: var(--bs-navbar-text-color);"></i>
+                <div class="link-tip" *ngIf="!isExpanded">
+                  <label>Files</label>
+                </div>
+              </div>
+              <div class="col-8">
+                <label class="link-tip-full-hidden">Files</label>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="row mb-3 navbar-side-elem" *ngIf="currentAccount.roles.includes('Admin')">
+          <a class="link-dark position-relative" [routerLink]="['/category']">
+            <div class="row align-items-center navbar-elem-text">
+              <div class="col-2">
+                <i class="bi bi-collection" style="font-size: 30px; color: var(--bs-navbar-text-color);"></i>
+                <div class="link-tip" *ngIf="!isExpanded">
+                  <label>Categories</label>
+                </div>
+              </div>
+              <div class="col-8">
+                <label class="link-tip-full-hidden">Categories</label>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="row mb-3 navbar-side-elem">
+          <a class="link-dark position-relative" [routerLink]="['/account']">
+            <div class="row align-items-center navbar-elem-text">
+              <div class="col-2">
+                <i class="bi bi-person-circle" style="font-size: 30px; color: var(--bs-navbar-text-color);"></i>
+                <div class="link-tip" *ngIf="!isExpanded">
+                  <label>Account</label>
+                </div>
+              </div>
+              <div class="col-8">
+                <label class="link-tip-full-hidden">Account</label>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="row mb-3 navbar-side-elem">
+          <a class="link-dark position-relative" style="cursor:pointer" [routerLink]="['/settings']">
+            <div class="row align-items-center navbar-elem-text">
+              <div class="col-2">
+                <i class="bi bi-gear" style="font-size: 30px; color: var(--bs-navbar-text-color);"></i>
+                <div class="link-tip" *ngIf="!isExpanded">
+                  <label>Settings</label>
+                </div>
+              </div>
+              <div class="col-8">
+                <label class="link-tip-full-hidden">Settings</label>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="row mb-3 navbar-side-elem ">
+          <a class="link-dark position-relative" style="cursor:pointer" (click)="SignOut()">
+            <div class="row align-items-center navbar-elem-text">
+              <div class="col-2">
+                <i class="bi bi-door-open" style="font-size: 30px; color: var(--bs-navbar-text-color);"></i>
+                <div class="link-tip" *ngIf="!isExpanded">
+                  <label>Sign out</label>
+                </div>
+              </div>
+              <div class="col-8">
+                <label class="link-tip-full-hidden">Sign out</label>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

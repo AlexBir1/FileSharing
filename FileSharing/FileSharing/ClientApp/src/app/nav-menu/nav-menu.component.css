@@ -1,0 +1,95 @@
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.nav-link:focus {
+  border: solid 1.5px black;
+  border-radius: 10px
+}
+
+.link-dark:hover .link-tip {
+  display: block;
+  max-width: fit-content;
+}
+
+.link-tip-full {
+  display: block;
+  cursor: pointer;
+}
+
+.link-tip-full-hidden {
+  display: none;
+}
+
+.link-tip {
+  display: none;
+  position: absolute;
+  left: 60px;
+  top: -2px;
+  padding: 5px 5px 5px 5px;
+  background-color: var(--bs-navbar-bg-color);
+  color: var(--bs-navbar-text-color);
+  border-radius: 5px;
+  border: 1.5px solid black;
+  width: 200px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.navbar-side-half {
+  width: 50px;
+  z-index: 10;
+  position: fixed;
+  background-color: var(--bs-navbar-bg-color);
+  padding: 5px 10px 5px 10px;
+  top: 0px;
+  bottom: 0px;
+}
+
+.navbar-side-full {
+  width: 225px;
+  z-index: 10;
+  position: fixed;
+  background-color: var(--bs-navbar-bg-color);
+  padding: 5px 10px 5px 10px;
+  top: 0px;
+  bottom: 0px;
+}
+
+.navbar-side-elem {
+  border: 0px solid black;
+  border-radius: 7px;
+  transition: border linear 0.1s, background-color linear 0.1s;
+  cursor: pointer;
+}
+
+  .navbar-side-elem:hover {
+    border: 1px solid black;
+    background-color: var(--bs-navbar-elem-hover-bg-color);
+  }
+
+.navbar-elem-text {
+  color: var(--bs-navbar-text-color);
+}

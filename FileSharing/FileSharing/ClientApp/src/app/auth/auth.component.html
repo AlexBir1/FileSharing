@@ -1,0 +1,70 @@
+<div class="row" style="justify-content: center; margin:100px auto auto auto">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-lg-6" style="display:flex; justify-content: start; align-items: center">
+            <h3 class="text-black">{{operation}}</h3>
+          </div>
+          <div class="col-lg-6" style="display: flex; justify-content: end ">
+            <button (click)="onChangeOperation()" class="btn btn-success">{{operationBtn}}</button>
+          </div>
+        </div>
+      </div>
+      <form *ngIf="isRegister" [formGroup]="registerForm" (submit)="onRegisterSubmit()">
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input class="form-control" formControlName="username" [class.is-invalid]="registerForm.controls['username'].dirty && registerForm.hasError('required','username')" />
+            <span *ngIf="registerForm.controls['username'].dirty && registerForm.hasError('required','username')" class="text-danger bold">Field is required</span>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" formControlName="email" [class.is-invalid]="registerForm.controls['email'].dirty && registerForm.hasError('required','email')" />
+            <span *ngIf="registerForm.controls['email'].dirty && registerForm.hasError('required','email')" class="text-danger bold">Field is required</span>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" formControlName="password" [class.is-invalid]="registerForm.controls['password'].dirty && registerForm.hasError('required','password')" />
+            <span *ngIf="registerForm.controls['password'].dirty && registerForm.hasError('required','password')" class="text-danger bold">Field is required</span>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Confirm password</label>
+            <input class="form-control" formControlName="passwordConfirm" [class.is-invalid]="registerForm.controls['passwordConfirm'].dirty && registerForm.hasError('required','passwordConfirm')" />
+            <span *ngIf="registerForm.controls['passwordConfirm'].dirty && registerForm.hasError('required','passwordConfirm')" class="text-danger bold">Field is required</span>
+          </div>
+          <div class="mb-3" *ngIf="ErrorList.length > 0">
+            <ul>
+              <li *ngFor="let it of ErrorList" class="text-danger">{{it}}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-footer text-center">
+          <button type="submit" class="btn btn-success">{{operation}}</button>
+        </div>
+      </form>
+      <form *ngIf="!isRegister" [formGroup]="loginForm" (submit)="onLoginSubmit()">
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Username or Email</label>
+            <input class="form-control" formControlName="someid" [class.is-invalid]="loginForm.controls['someid'].dirty && loginForm.hasError('required','someid')" />
+            <span *ngIf="loginForm.controls['someid'].dirty && loginForm.hasError('required','someid')" class="text-danger bold">Field is required</span>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input class="form-control" formControlName="password" [class.is-invalid]="loginForm.controls['password'].dirty && loginForm.hasError('required','password')" />
+            <span *ngIf="loginForm.controls['password'].dirty && loginForm.hasError('required','password')" class="text-danger bold">Field is required</span>
+          </div>
+          <div class="mb-3" *ngIf="ErrorList.length > 0">
+            <ul *ngFor="let it of ErrorList">
+              <li class="text-danger">{{it}}</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-footer text-center">
+          <button type="submit" class="btn btn-success">{{operation}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

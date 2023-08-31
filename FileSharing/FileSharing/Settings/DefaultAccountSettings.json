@@ -1,0 +1,18 @@
+[
+	{
+		"Key": "showRandomFiles",
+		"Value": "true"
+	},
+	{
+		"Key": "showLastUploadedFiles",
+		"Value": "false"
+	},
+	{
+		"Key": "showMostDownloadedFiles",
+		"Value": "false"
+	},
+	{
+		"Key": "isDarkTheme",
+		"Value": "false"
+	}
+]

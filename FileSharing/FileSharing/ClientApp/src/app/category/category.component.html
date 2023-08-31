@@ -1,0 +1,123 @@
+<div class="row justify-content-center mb-5" style="margin-top: 50px" *ngIf="currentAccount.roles.includes('Admin')">
+  <div class="col-lg-5 text-center" *ngIf="!createCategoryActive">
+    <div class="btn-group">
+      <button class="btn btn-primary" (click)="changeCreateCategoryStatus()">Add category <i class="bi bi-plus-circle"></i></button>
+    </div>
+  </div>
+  <div class="col-lg-5 text-center" *ngIf="createCategoryActive">
+    <div class="input-group">
+      <button class="btn btn-danger" style="font-size:16px"><i class="bi bi-arrow-left-circle" (click)="changeCreateCategoryStatus()"></i></button>
+      <input type="text" class="form-control" [(ngModel)]="newCategoryTitle" placeholder="Title" />
+      <button class="btn btn-primary" (click)="addCategory(newCategoryTitle)">Add</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="categoryList.length === 0">
+  <h3>Loading...</h3>
+</div>
+
+<div class="row justify-content-center mt-5" *ngIf="!showSelectedCategory && categoryList.length > 0">
+  <div class="col-lg-4">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td>Title</td>
+          <td>#</td>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of categoryList | paginate: {itemsPerPage: 5, currentPage: page, totalItems: categoryList.length}">
+          <td>{{item.title}}</td>
+          <td><button class="btn btn-success" (click)="changeShowSelectedCategory(item)">Details</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-3">
+      <pagination-controls previousLabel="Back" nextLabel="Next" (pageChange)="changeCurrentPage($event)">
+      </pagination-controls>
+    </div>
+  </div>
+</div>
+
+
+<div class="row justify-content-center mt-5" *ngIf="selectedCategory != null && !updateCategoryActive">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-lg-1">
+            <button class="btn btn-danger" style="font-size:16px" (click)="changeShowSelectedCategory(null)"><i class="bi bi-arrow-left-circle"></i></button>
+          </div>
+          <div class="col text-center align-content-center">
+            <h3>Selected Category</h3>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>
+            Title: {{selectedCategory.title}}
+          </li>
+          <li>
+            Count of elements: {{selectedCategory.elementCount}}
+          </li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-warning" (click)="changeUpdateCategoryActive()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center mt-5" *ngIf="updateCategoryActive">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-lg-1">
+            <button class="btn btn-danger" style="font-size:16px" (click)="changeUpdateCategoryActive()"><i class="bi bi-arrow-left-circle"></i></button>
+          </div>
+          <div class="col text-center align-content-center">
+            <h3>Update Category</h3>
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="updateCategoryForm" (submit)="openModal(updateGroupConfimation)">
+        <input type="hidden" formControlName="id" />
+        <div class="card-body">
+          <div class="mb-3">
+            <label for="titleInput">Title</label>
+            <input id="titleInput" class="form-control" formControlName="title" />
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col">
+              <button type="submit" class="btn btn-success">Update</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<ng-template #updateGroupConfimation>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Confirmation</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Check the new title before performing an update.
+    <br />
+    <h3>CONTINUE??</h3>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" (click)="updateCategory()">Confirm update</button>
+  </div>
+</ng-template>

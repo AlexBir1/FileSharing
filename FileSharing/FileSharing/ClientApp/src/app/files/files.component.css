@@ -1,0 +1,23 @@
+.card-list {
+  grid-template-columns: auto auto auto;
+}
+
+@media(max-width: 800px) {
+  .card-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.button-border-elem {
+  border: 0px solid black;
+  border-radius: 7px;
+  transition: border linear 0.1s, background-color ease-in 0.1s;
+  cursor: pointer;
+  color: var(--bs-navbar-text-color);
+}
+
+  .button-border-elem:hover {
+    border: 1px solid black;
+    background-color: var(--bs-navbar-elem-hover-bg-color);
+  }
+
