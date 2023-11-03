@@ -1,6 +1,7 @@
 import { CategoryModel } from "../Entity/CategoryModel";
 import { FileInfoModel } from "../Entity/FileInfoModel";
-import { FilesService } from "../files.service";
+import { FilesService } from "../services/files.service";
+
 
 export class FilesHandler
 {

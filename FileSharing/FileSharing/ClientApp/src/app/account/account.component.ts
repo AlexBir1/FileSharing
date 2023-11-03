@@ -2,13 +2,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AccountService } from '../account.service';
+
 import { AccountModel } from '../Entity/AccountModel';
 import { ResponseModel } from '../Entity/ResponseModel';
 import { UpdateAccountModel } from '../Entity/UpdateAccountModel';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { AccountHandler } from '../Handlers/AccountHandler';
 import { AccountInfoModel } from '../Entity/AccountInfoModel';
+
+import { AccountService } from '../services/account.service';
 
 @Component({
   selector: 'app-account',

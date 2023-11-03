@@ -3,12 +3,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map } from 'rxjs';
-import { AccountService } from '../account.service';
+
 import { AccountModel } from '../Entity/AccountModel';
 import { LoginModel } from '../Entity/LoginModel';
 import { RegisterModel } from '../Entity/RegisterModel';
-
 import { ResponseModel } from '../Entity/ResponseModel';
+
+import { AccountService } from '../services/account.service';
 
 @Component({
   selector: 'app-auth',

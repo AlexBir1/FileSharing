@@ -11,16 +11,18 @@ import { HomeComponent } from './home/home.component';
 import { AuthComponent } from './auth/auth.component';
 import { FilesComponent } from './files/files.component';
 import { AccountComponent } from './account/account.component';
-import { AccountService } from './account.service';
-import { FilesService } from './files.service';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { BsModalService, ModalModule } from 'ngx-bootstrap/modal';
 import { CategoryComponent } from './category/category.component';
-import { CategoryService } from './category.service';
 import { SettingsComponent } from './settings/settings.component';
-import { SettingsService } from './settings.service';
 import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
+
+import { AccountService } from './services/account.service';
+import { FilesService } from './services/files.service';
+import { CategoryService } from './services/category.service';
+import { SettingsService } from './services/settings.service';
+import { StandartFileSizerPipe } from './pipes/convertFileSize.pipe';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,7 @@ import { ProgressbarModule } from 'ngx-bootstrap/progressbar';
     AccountComponent,
     CategoryComponent,
     SettingsComponent,
+    StandartFileSizerPipe
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

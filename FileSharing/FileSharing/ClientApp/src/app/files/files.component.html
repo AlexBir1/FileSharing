@@ -46,7 +46,7 @@
         <div class="card-body">
           <ul>
             <li>
-              Size: {{convertFileSize(item.size)}}
+              Size: {{item.size | useStandartFileSizes}}
             </li>
             <li>
               Category: {{item.categoryTitle}}
@@ -108,7 +108,7 @@
         <div class="card-body">
           <ul>
             <li>
-              Size: {{convertFileSize(item.size)}}
+              Size: {{item.size | useStandartFileSizes}}
             </li>
             <li>
               Category: {{item.categoryTitle}}
@@ -170,7 +170,7 @@
         <div class="card-body">
           <ul>
             <li>
-              Size: {{convertFileSize(item.size)}}
+              Size: {{item.size | useStandartFileSizes}}
             </li>
             <li>
               Category: {{item.categoryTitle}}
@@ -250,7 +250,7 @@
               ContentType: {{fileHandler.selectedFile.contentType}}
             </li>
             <li>
-              Size: {{convertFileSize(fileHandler.selectedFile.size)}}
+              Size: {{fileHandler.selectedFile.size | useStandartFileSizes}}
             </li>
             <li>
               Path: {{fileHandler.selectedFile.path}}

@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AccountService } from './account.service';
-import { FilesService } from './files.service';
 import * as $ from 'jquery';
-import { SettingsService } from './settings.service';
+
+import { AccountService } from './services/account.service';
+import { FilesService } from './services/files.service';
+import { SettingsService } from './services/settings.service';
+
 
 @Component({
   selector: 'app-root',

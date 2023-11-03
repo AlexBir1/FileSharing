@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FileInfoModel } from '../Entity/FileInfoModel';
-import { FilesService } from '../files.service';
-import { SettingsService } from '../settings.service';
+
+import { FilesService } from '../services/files.service';
+import { SettingsService } from '../services/settings.service';
+
 
 @Component({
   selector: 'app-home',

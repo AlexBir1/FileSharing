@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountService } from '../account.service';
 import { AccountModel } from '../Entity/AccountModel';
-import { SettingsService } from '../settings.service';
+
+import { AccountService } from '../services/account.service';
+import { SettingsService } from '../services/settings.service';
 
 @Component({
   selector: 'app-nav-menu',

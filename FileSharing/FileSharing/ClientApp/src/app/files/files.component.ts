@@ -4,14 +4,16 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription } from 'rxjs';
-import { AccountService } from '../account.service';
-import { CategoryService } from '../category.service';
+
 import { AccountModel } from '../Entity/AccountModel';
 import { CategoryModel } from '../Entity/CategoryModel';
 import { FileInfoModel } from '../Entity/FileInfoModel';
 import { ResponseModel } from '../Entity/ResponseModel';
-import { FilesService } from '../files.service';
+
 import { FilesHandler } from '../Handlers/FilesHandler';
+import { AccountService } from '../services/account.service';
+import { CategoryService } from '../services/category.service';
+import { FilesService } from '../services/files.service';
 
 @Component({
   selector: 'app-files',
@@ -64,7 +66,7 @@ export class FilesComponent implements OnInit {
   fillCategories() {
     this.categoryService.getCategories().subscribe(x => {
       if (x.isSuccessful) {
-        x.data.forEach(y => this.categories.push(y));
+        x.data.forEach((y: CategoryModel) => this.categories.push(y));
       }
     });
   }
@@ -184,28 +186,6 @@ export class FilesComponent implements OnInit {
         console.error(res);
       }
     });
-  }
-
-  convertFileSize(sourceSize: number): string {
-    var result = '';
-    var typeOfSize = ' Bytes';
-    if (sourceSize > 1000) { // kb
-      if (sourceSize > 1000000) { // mb
-        if (sourceSize > 1000000000) { // gb
-          result = (sourceSize / 1000000000).toFixed(2);
-          typeOfSize = ' Gb';
-          return String(result + typeOfSize);
-        }
-        result = (sourceSize / 1000000).toFixed(2);
-        typeOfSize = ' Mb';
-        return String(result + typeOfSize);
-      }
-      result = (sourceSize / 1000).toFixed(2);
-      typeOfSize = ' Kb';
-      return String(result + typeOfSize);
-    }
-    result = sourceSize.toString();
-    return String(result + typeOfSize);
   }
 
   openModal(template: TemplateRef<any>) {

@@ -1,8 +1,9 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { AccountService } from '../account.service';
 import { SettingsModel } from '../Entity/SettingsModel';
-import { SettingsService } from '../settings.service';
+import { AccountService } from '../services/account.service';
+import { SettingsService } from '../services/settings.service';
+
 
 @Component({
   selector: 'app-settings',

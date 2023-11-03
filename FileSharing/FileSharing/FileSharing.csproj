@@ -41,6 +41,7 @@
     <None Remove="ClientApp\src\app\Entity\UpdateAccountModel.ts" />
     <None Remove="ClientApp\src\app\files.service.ts" />
     <None Remove="ClientApp\src\app\Handlers\FilesHandler.ts" />
+    <None Remove="ClientApp\src\app\pipes\convertFileSize.pipe.ts" />
     <None Remove="ClientApp\src\app\settings.service.ts" />
   </ItemGroup>
 
@@ -49,8 +50,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\src\app\account.service.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\category.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pipes\convertFileSize.pipe.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\account.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\category.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Entity\AccountRoleModel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Handlers\AccountHandler.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Entity\AccountInfoModel.ts" />
@@ -62,9 +64,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\Entity\ResponseModel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Entity\SettingsModel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Entity\UpdateAccountModel.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\files.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\files.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\Handlers\FilesHandler.ts" />
-    <TypeScriptCompile Include="ClientApp\src\app\settings.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\settings.service.ts" />
   </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

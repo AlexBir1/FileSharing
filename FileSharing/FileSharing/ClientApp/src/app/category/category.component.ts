@@ -1,10 +1,11 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { AccountService } from '../account.service';
-import { CategoryService } from '../category.service';
 import { AccountModel } from '../Entity/AccountModel';
 import { CategoryModel } from '../Entity/CategoryModel';
+
+import { AccountService } from '../services/account.service';
+import { CategoryService } from '../services/category.service';
 
 @Component({
   selector: 'app-category',

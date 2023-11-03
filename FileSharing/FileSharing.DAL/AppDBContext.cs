@@ -30,7 +30,10 @@ namespace FileSharing.DAL
             if (Database.CanConnect())
                 foreach (var item in triggerValues)
                 {
-                    ExecuteSQLFromFile(item);
+                    if (Database.ExecuteSql($"select * from sys.triggers where name = 'MyTrigger'") == 0)
+                    {
+                        ExecuteSQLFromFile(item);
+                    }
                 }
         }
 
@@ -38,7 +41,9 @@ namespace FileSharing.DAL
         {
             try
             {
+
                 Database.ExecuteSqlRaw(sqlQuery);
+
                 return true;
             }
             catch (Exception ex)
