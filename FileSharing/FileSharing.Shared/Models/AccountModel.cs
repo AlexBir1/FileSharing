@@ -1,6 +1,6 @@
-﻿using FileSharing.DAL.Entity;
+﻿
 
-namespace FileSharing.Models
+namespace FileSharing.Shared.Models
 {
     public class AccountModel
     {

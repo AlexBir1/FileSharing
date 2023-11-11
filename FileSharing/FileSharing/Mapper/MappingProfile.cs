@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using FileSharing.DAL.Entity;
+using FileSharing.Shared.Models;
 
-namespace FileSharing.Models.Mapper
+namespace FileSharing.Mapper
 {
     public class MappingProfile : Profile
     {

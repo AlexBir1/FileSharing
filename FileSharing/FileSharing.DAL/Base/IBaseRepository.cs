@@ -9,8 +9,8 @@ namespace FileSharing.DAL.Base
 {
     public interface IBaseRepository<T>
     {
-        Task<IBaseResponse<T>> Create(T Entity, IEnumerable<CRUDOptions> Options);
-        Task<IBaseResponse<T>> Update(string Id, T Entity, IEnumerable<CRUDOptions> Options);
+        Task<IBaseResponse<T>> Create(T Entity);
+        Task<IBaseResponse<T>> Update(string Id, T Entity);
         Task<IBaseResponse<T>> Delete(string Id);
         Task<IBaseResponse<IEnumerable<T>>> Select();
         Task<IBaseResponse<IEnumerable<T>>> Select(Expression<Func<T>> expression);

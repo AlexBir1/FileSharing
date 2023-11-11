@@ -13,5 +13,7 @@ namespace FileSharing.DAL.Interfaces
     {
         Task<IBaseResponse<Account>> SetPassword(string Id, string password);
         Task<IBaseResponse<Account>> ChangeRole(string accountId, string role);
+        Task<IBaseResponse<Account>> UpdateFileActivity(string accountId, long addToTotalSize);
+        Task<IBaseResponse<string[]>> GetAccountRoles(string accountId);
     }
 }

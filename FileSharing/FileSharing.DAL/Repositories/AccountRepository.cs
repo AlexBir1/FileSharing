@@ -20,13 +20,11 @@ namespace FileSharing.DAL.Repositories
     {
         private readonly AppDBContext _db;
         private readonly UserManager<Account> _userManager;
-        private readonly SettingsService _settingsService;
 
-        public AccountRepository(AppDBContext db, UserManager<Account> userManager, SettingsService settingsService)
+        public AccountRepository(AppDBContext db, UserManager<Account> userManager)
         {
             _db = db;
             _userManager = userManager;
-            _settingsService = settingsService;
         }
 
         public async Task<IBaseResponse<Account>> ChangeRole(string accountId, string role)
@@ -35,15 +33,17 @@ namespace FileSharing.DAL.Repositories
             {
                 var account = await _userManager.FindByIdAsync(accountId);
                 var roles = await _userManager.GetRolesAsync(account);
-                await _userManager.RemoveFromRoleAsync(account, roles.First());
+
+                if(roles.Any())
+                    await _userManager.RemoveFromRoleAsync(account, roles.First());
 
                 var accountRole = RoleHandler.GetRoleByName(role);
-                if(accountRole != null)
+                if (accountRole != null)
                 {
                     await _userManager.AddToRoleAsync(account, accountRole.ToString());
                     return new Response<Account>(account, new List<string>(), true);
                 }
-                return new Response<Account>(account, new List<string>() { new string("Role does not exist")}, false);
+                return new Response<Account>(account, new List<string>() { new string("Role does not exist") }, false);
             }
             catch (Exception ex)
             {
@@ -55,23 +55,13 @@ namespace FileSharing.DAL.Repositories
             }
         }
 
-        public async Task<IBaseResponse<Account>> Create(Account Entity, IEnumerable<CRUDOptions> Options)
+        public async Task<IBaseResponse<Account>> Create(Account Entity)
         {
             try
             {
-                CRUDOptions newPassword = Options.FirstOrDefault(l => l.Id == "Password");
-
-                IdentityResult Result;
-
-                if(newPassword == null)
-                    Result = await _userManager.CreateAsync(Entity);
-                else
-                    Result = await _userManager.CreateAsync(Entity, newPassword.Value);
-
-                
+                var Result = await _userManager.CreateAsync(Entity);
 
                 Account newAccount = await _userManager.FindByNameAsync(Entity.UserName);
-                await _settingsService.SetDefaultSettings(newAccount.Id);
 
                 if (Result.Succeeded)
                 {
@@ -114,6 +104,25 @@ namespace FileSharing.DAL.Repositories
             }
         }
 
+        public async Task<IBaseResponse<string[]>> GetAccountRoles(string accountId)
+        {
+            try
+            {
+                var account = await _userManager.FindByIdAsync(accountId);
+                var roles = await _userManager.GetRolesAsync(account);
+
+                return new Response<string[]>(roles.ToArray(), null, true);
+            }
+            catch(Exception ex) 
+            {
+                List<string> errors = new List<string>()
+                {
+                    new string(ex.Message),
+                };
+                return new Response<string[]>(new string[0], errors, false);
+            }
+        }
+
         public async Task<IBaseResponse<IEnumerable<Account>>> Select()
         {
             try
@@ -139,7 +148,7 @@ namespace FileSharing.DAL.Repositories
             }
         }
 
-        public async Task<IBaseResponse<IEnumerable<Account>>> Select(Expression<Func<Account,bool>> func)
+        public async Task<IBaseResponse<IEnumerable<Account>>> Select(Expression<Func<Account, bool>> func)
         {
             try
             {
@@ -175,7 +184,7 @@ namespace FileSharing.DAL.Repositories
             {
                 var account = await _userManager.FindByIdAsync(Id);
 
-                if(account == null)
+                if (account == null)
                     return new Response<Account>(null, new List<string>() { new string("Account does not exist") }, false);
 
                 var Result = await _userManager.AddPasswordAsync(account, password);
@@ -186,7 +195,7 @@ namespace FileSharing.DAL.Repositories
                 }
                 return new Response<Account>(account, Result.Errors.Select(x => x.Description).ToList(), false);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 List<string> errors = new List<string>()
                 {
@@ -196,7 +205,7 @@ namespace FileSharing.DAL.Repositories
             }
         }
 
-        public async Task<IBaseResponse<Account>> Update(string Id, Account Entity, IEnumerable<CRUDOptions> Options)
+        public async Task<IBaseResponse<Account>> Update(string Id, Account Entity)
         {
             try
             {
@@ -204,14 +213,45 @@ namespace FileSharing.DAL.Repositories
                 if (Account != null)
                 {
                     var Result = await _userManager.UpdateAsync(Entity);
-                    if(Result.Succeeded)
+                    if (Result.Succeeded)
                     {
                         return new Response<Account>(Account, new List<string>(), true);
                     }
-                    return new Response<Account>(Account, Result.Errors.Select(x=>x.Description).ToList(), false);
+                    return new Response<Account>(Account, Result.Errors.Select(x => x.Description).ToList(), false);
                 }
-                
+
                 return new Response<Account>(Account, new List<string>() { new string("Cannot update account that does not exist") }, false);
+            }
+            catch (Exception ex)
+            {
+                List<string> errors = new List<string>()
+                {
+                    new string(ex.Message),
+                };
+                return new Response<Account>(null, errors, false);
+            }
+        }
+
+        public async Task<IBaseResponse<Account>> UpdateFileActivity(string accountId, long addToTotalSize)
+        {
+            try
+            {
+                var account = await _userManager.FindByIdAsync(accountId);
+
+                if (account != null)
+                {
+                    account.AddTotalSize(addToTotalSize);
+                    account.IncrementUploadedCounter();
+
+                    var Result = await _userManager.UpdateAsync(account);
+                    if (Result.Succeeded)
+                    {
+                        return new Response<Account>(account, new List<string>(), true);
+                    }
+                    return new Response<Account>(account, Result.Errors.Select(x => x.Description).ToList(), false);
+                }
+
+                return new Response<Account>(account, new List<string>() { new string("Cannot update account that does not exist") }, false);
             }
             catch (Exception ex)
             {

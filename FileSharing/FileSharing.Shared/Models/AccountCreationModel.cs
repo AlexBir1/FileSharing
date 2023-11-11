@@ -1,7 +1,7 @@
 ﻿using FileSharing.Shared;
 using System.ComponentModel.DataAnnotations;
 
-namespace FileSharing.Models
+namespace FileSharing.Shared.Models
 {
     public class AccountCreationModel
     {

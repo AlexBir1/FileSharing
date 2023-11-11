@@ -23,24 +23,14 @@ namespace FileSharing.DAL.Repositories
             _userManager = userManager;
         }
 
-        public async Task<IBaseResponse<Entity.FileInfo>> Create(Entity.FileInfo Entity, IEnumerable<CRUDOptions> Options)
+        public async Task<IBaseResponse<Entity.FileInfo>> Create(Entity.FileInfo Entity)
         {
             try
             {
-                var accountIdValue = Options.Where(x => x.Id == "account").FirstOrDefault();
-
                 var Result = _db.Files.Add(Entity);
                 if (Result != null)
                 {
-                    if (accountIdValue is not null)
-                    {
-                        var account = await _userManager.FindByIdAsync(accountIdValue?.Value);
-
-                        account.AddTotalSize(Entity.Size);
-                        account.IncrementUploadedCounter();
-
-                        await _userManager.UpdateAsync(account);
-                    }
+                    return new Response<Entity.FileInfo>(Result.Entity, new List<string>(), true);
                 }
                 return new Response<Entity.FileInfo>(Result.Entity, new List<string>(), false);
             }
@@ -133,15 +123,14 @@ namespace FileSharing.DAL.Repositories
             }
         }
 
-        public async Task<IBaseResponse<Entity.FileInfo>> Update(string Id, Entity.FileInfo Entity, IEnumerable<CRUDOptions> Options)
+        public async Task<IBaseResponse<Entity.FileInfo>> Update(string Id, Entity.FileInfo Entity)
         {
             try
             {
                 var fileFromDb = await _db.Files.AsNoTracking().FirstOrDefaultAsync(x => x.Id == int.Parse(Id));
                 if (fileFromDb != null)
                 {
-                    fileFromDb = Entity;
-                    _db.Files.Update(fileFromDb);
+                    _db.Files.Update(Entity);
                     return new Response<Entity.FileInfo>(Entity, new List<string>(), true);
                 }
                 return new Response<Entity.FileInfo>(Entity, new List<string>() { new string("File not found") }, false);

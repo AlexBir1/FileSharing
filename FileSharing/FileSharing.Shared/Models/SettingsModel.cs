@@ -1,4 +1,4 @@
-﻿namespace FileSharing.Models
+﻿namespace FileSharing.Shared.Models
 {
     public class SettingsModel
     {

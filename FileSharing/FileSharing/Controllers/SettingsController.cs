@@ -2,10 +2,12 @@
 using FileSharing.DAL.Entity;
 using FileSharing.DAL.Interfaces;
 using FileSharing.DAL.Services;
-using FileSharing.Models;
+using FileSharing.Services.Interfaces;
+using FileSharing.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 
 namespace FileSharing.Controllers
 {
@@ -13,13 +15,13 @@ namespace FileSharing.Controllers
     [ApiController]
     public class SettingsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ISettingsService _service;
         private readonly IMapper _mapper;
         
 
-        public SettingsController(IUnitOfWork unitOfWork, IMapper mapper, SettingsService settingsService)
+        public SettingsController(ISettingsService service, IMapper mapper)
         {
-            _unitOfWork = unitOfWork;
+            _service = service;
             _mapper = mapper;
         }
 
@@ -28,20 +30,7 @@ namespace FileSharing.Controllers
         {
             try
             {
-                var result = await _unitOfWork.Settings.EqualizeSettingsWithDB();
-                if (result.IsSuccessful)
-                {
-                    await _unitOfWork.CommitAsync();
-                    return new ResponseModel<IEnumerable<SettingsModel>>()
-                    {
-                        IsSuccessful = result.IsSuccessful,
-                    };
-                }
-                return new ResponseModel<IEnumerable<SettingsModel>>()
-                {
-                    IsSuccessful = result.IsSuccessful,
-                    Errors = result.Errors.ToArray(),
-                };
+                return Ok(await _service.EqualizeSettingsFileWithDB());
             }
             catch (Exception ex)
             {
@@ -55,7 +44,6 @@ namespace FileSharing.Controllers
         {
             if(ModelState.IsValid)
             {
-
             }
             return new ResponseModel<IEnumerable<SettingsModel>>
             {
@@ -70,26 +58,7 @@ namespace FileSharing.Controllers
         {
             try
             {
-                var settingsResult = await _unitOfWork.Settings.GetSettings(account_id);
-                if (settingsResult.IsSuccessful)
-                {
-                    var settingsList = new List<SettingsModel>();
-                    foreach (var item in settingsResult.Data)
-                    {
-                        var setting = _mapper.Map<SettingsModel>(item);
-                        settingsList.Add(setting);
-                    }
-                    return new ResponseModel<IEnumerable<SettingsModel>>
-                    {
-                        IsSuccessful = true,
-                        Data = settingsList,
-                    };
-                }
-                return new ResponseModel<IEnumerable<SettingsModel>>
-                {
-                    IsSuccessful = false,
-                    Errors = settingsResult.Errors.ToArray(),
-                };
+                return Ok(await _service.GetAccountSettings(account_id));
             }
             catch (Exception ex)
             {
@@ -103,34 +72,7 @@ namespace FileSharing.Controllers
         {
             try
             {
-                var settingsList = new List<Settings>();
-                foreach (var item in model)
-                {
-                    var setting = _mapper.Map<Settings>(item);
-                    settingsList.Add(setting);
-                }
-                var Result = await _unitOfWork.Settings.SetSettings(settingsList);
-                if (Result.IsSuccessful)
-                {
-                    await _unitOfWork.CommitAsync();
-
-                    var settings = new List<SettingsModel>();
-                    foreach (var item in settingsList)
-                    {
-                        settings.Add(_mapper.Map<SettingsModel>(item));
-                    }
-
-                    return new ResponseModel<IEnumerable<SettingsModel>>
-                    {
-                        IsSuccessful = true,
-                        Data = settings.ToArray()
-                    };
-                }
-                return new ResponseModel<IEnumerable<SettingsModel>>
-                {
-                    IsSuccessful = false,
-                    Errors = Result.Errors.ToArray(),
-                };
+                return Ok(await _service.SetAccountSettings("", model));
             }
             catch (Exception ex)
             {

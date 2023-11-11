@@ -47,6 +47,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FileSharing.DAL\FileSharing.DAL.csproj" />
+    <ProjectReference Include="..\FileSharing.Services\FileSharing.Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

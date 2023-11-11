@@ -17,7 +17,8 @@ namespace FileSharing.DAL.Repositories
         public IFilesRepository Files { get; private set; }
         public ICategoryRepository Categories { get; private set; }
         public bool CanConnect { get; private set; }
-        public SettingsService Settings { get; private set; }
+        public ISettingsRepository Settings { get; private set; }
+        public JWTService JWT { get; private set; }
 
         public AppDBContext _db { get; private set; }
 
@@ -28,10 +29,11 @@ namespace FileSharing.DAL.Repositories
             _db = db;
             _userManager = userManager;
             CanConnect = _db.Database.CanConnect();
-            Files = new FilesRepository(_db, _userManager);
-            Categories = new CategoryRepository(_db);
-            Settings = new SettingsService(_db, _userManager);
-            Accounts = new AccountRepository(_db, _userManager, Settings);
+            Files = new FilesRepository(db, _userManager);
+            Categories = new CategoryRepository(db);
+            Settings = new SettingsRepository(db, _userManager);
+            Accounts = new AccountRepository(db, _userManager);
+            JWT = new JWTService(userManager);
         }
 
         public async Task CommitAsync()
@@ -40,14 +42,9 @@ namespace FileSharing.DAL.Repositories
             {
                 await _db.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (Exception ex)
             {
-                _db.ChangeTracker.Clear();
-                foreach (var entry in ex.Entries)
-                {
-                    _db.Attach(entry);
-                    _db.SaveChanges();
-                }
+                
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FileSharing.DAL.Entity
+namespace FileSharing.Shared.Models
 {
     public class FileInfoModel
     {

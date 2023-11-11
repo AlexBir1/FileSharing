@@ -4,6 +4,8 @@ using FileSharing.DAL.Entity;
 using FileSharing.DAL.Interfaces;
 using FileSharing.DAL.Repositories;
 using FileSharing.DAL.Services;
+using FileSharing.Services.Interfaces;
+using FileSharing.Services.Services;
 using FileSharing.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -52,8 +54,14 @@ namespace FileSharing
             });
 
             builder.Services.AddScoped<JWTService>();
-            builder.Services.AddScoped<SettingsService>();
+
+            builder.Services.AddScoped<ISettingsService, SettingsService>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IFilesService, FilesService>();
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
             var app = builder.Build();
@@ -100,7 +108,7 @@ namespace FileSharing
 
                     if (!categoryResult.IsSuccessful)
                     {
-                        await service.Categories.Create(unsortedCategory, new List<CRUDOptions>());
+                        await service.Categories.Create(unsortedCategory);
                         await service.CommitAsync();
                     }
 
@@ -116,11 +124,6 @@ namespace FileSharing
                     {
                         string adminPassword = builder.Configuration["AdminDefaults:Password"];
 
-                        List<CRUDOptions> options = new List<CRUDOptions>()
-                {
-                    new CRUDOptions("Password", adminPassword),
-                };
-
                         Account admin = new Account()
                         {
                             UserName = builder.Configuration["AdminDefaults:Username"],
@@ -130,8 +133,12 @@ namespace FileSharing
                             FilesUploaded = 0,
                         };
 
-                        await service.Accounts.Create(admin, options);
+                        await service.Accounts.Create(admin);
+
                         var administrator = await userManager.FindByNameAsync(builder.Configuration["AdminDefaults:Username"]);
+
+                        await userManager.AddPasswordAsync(administrator, adminPassword);
+
                         await userManager.AddToRoleAsync(administrator, AccountRoles.Admin.ToString());
 
                             await service.CommitAsync();

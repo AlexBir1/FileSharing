@@ -12,7 +12,8 @@ namespace FileSharing.DAL.Interfaces
         public IAccountRepository Accounts { get; }
         public IFilesRepository Files { get; }
         public ICategoryRepository Categories { get; }
-        public SettingsService Settings { get; }
+        public ISettingsRepository Settings { get; }
+        public JWTService JWT { get; }
         public bool CanConnect { get; }
         public Task CommitAsync();
     }

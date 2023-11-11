@@ -20,7 +20,7 @@ namespace FileSharing.DAL.Repositories
             _db = db;
         }
 
-        public async Task<IBaseResponse<Category>> Create(Category Entity, IEnumerable<CRUDOptions> Options)
+        public async Task<IBaseResponse<Category>> Create(Category Entity)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace FileSharing.DAL.Repositories
             }
         }
 
-        public async Task<IBaseResponse<Category>> Update(string Id, Category Entity, IEnumerable<CRUDOptions> Options)
+        public async Task<IBaseResponse<Category>> Update(string Id, Category Entity)
         {
             try
             {

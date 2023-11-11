@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSharing.DAL", "FileShar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileSharing.Shared", "FileSharing.Shared\FileSharing.Shared.csproj", "{F5DC03DA-2488-41D5-B10B-3A28ABB53B56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileSharing.Services", "FileSharing.Services\FileSharing.Services.csproj", "{C0F13AC7-AFE7-4AA2-B4AD-79A6D3460082}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F5DC03DA-2488-41D5-B10B-3A28ABB53B56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5DC03DA-2488-41D5-B10B-3A28ABB53B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5DC03DA-2488-41D5-B10B-3A28ABB53B56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0F13AC7-AFE7-4AA2-B4AD-79A6D3460082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0F13AC7-AFE7-4AA2-B4AD-79A6D3460082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0F13AC7-AFE7-4AA2-B4AD-79A6D3460082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0F13AC7-AFE7-4AA2-B4AD-79A6D3460082}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
