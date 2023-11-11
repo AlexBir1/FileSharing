@@ -203,7 +203,49 @@ namespace FileSharing.Services.Services
 
         public async Task<ResponseModel<IEnumerable<AccountModel>>> Select()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = await _unit.Accounts.Select();
+                if (result.IsSuccessful)
+                {
+                    List<AccountModel> accountModels = new List<AccountModel>();
+
+                    foreach(var model in result.Data)
+                    {
+                        accountModels.Add(_mapper.Map<AccountModel>(model));
+
+                        var rolesResult = await _unit.Accounts.GetAccountRoles(model.Id);
+
+                        accountModels.First(x=>x.Id == model.Id).Roles = rolesResult.Data.ToArray();
+                    }
+
+                    return new ResponseModel<IEnumerable<AccountModel>>()
+                    {
+                        Data = accountModels,
+                        IsSuccessful = true,
+                        Errors = null
+                    };
+                }
+
+                return new ResponseModel<IEnumerable<AccountModel>>()
+                {
+                    Data = null,
+                    IsSuccessful = false,
+                    Errors = result.Errors.ToArray()
+                };
+            }
+            catch(Exception ex)
+            {
+                return new ResponseModel<IEnumerable<AccountModel>>()
+                {
+                    IsSuccessful = false,
+                    Data = null,
+                    Errors = new string[]
+                    {
+                        ex.Message
+                    }
+                };
+            }
         }
 
         public async Task<ResponseModel<IEnumerable<AccountModel>>> Select(Expression<Func<AccountModel, bool>> expression)

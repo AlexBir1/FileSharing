@@ -37,39 +37,33 @@ namespace FileSharing.Controllers
             return Ok(await _service.RefreshToken(User.FindFirstValue(ClaimTypes.NameIdentifier), _config));
         }
 
-        //[Authorize(Roles = "Admin")]
-        //[HttpGet("GetAccounts")]
-        //public async Task<ActionResult<ResponseModel<AccountModel[]>>> GetAccounts()
-        //{
-        //    try
-        //    {
-        //        var accounts = await _unit.Accounts.Select();
-        //        if (accounts.IsSuccessful)
-        //        {
-        //            var accountModels = new List<AccountModel>();
-        //            foreach (var account in accounts.Data)
-        //            {
-        //                accountModels.Add(_mapper.Map<AccountModel>(account));
-        //                var roles = await _userManager.GetRolesAsync(account);
-        //                accountModels.First(x => x.Id == account.Id).Roles = roles.ToArray();
-        //            }
-        //            return new ResponseModel<AccountModel[]>
-        //            {
-        //                IsSuccessful = true,
-        //                Data = accountModels.ToArray()
-        //            };
-        //        }
-        //        return new ResponseModel<AccountModel[]>
-        //        {
-        //            IsSuccessful = false,
-        //            Errors = accounts.Errors.ToArray()
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex);
-        //    }
-        //}
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetAccounts")]
+        public async Task<ActionResult<ResponseModel<AccountModel[]>>> GetAccounts()
+        {
+            try
+            {
+                var accounts = await _service.Select();
+                if (accounts.IsSuccessful)
+                {
+                    return new ResponseModel<AccountModel[]>
+                    {
+                        IsSuccessful = true,
+                        Errors = null,
+                        Data = accounts.Data.ToArray()
+                    };
+                }
+                return new ResponseModel<AccountModel[]>
+                {
+                    IsSuccessful = false,
+                    Errors = accounts.Errors.ToArray()
+                };
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
 
         [Authorize]
         [HttpGet("AdditionalInfo/{accountId}")]
